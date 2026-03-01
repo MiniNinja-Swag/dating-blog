@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     View, Text, TouchableOpacity, ActivityIndicator,
-    RefreshControl, ScrollView, Alert, Modal, TextInput, Image, ImageBackground
+    RefreshControl, ScrollView, Alert, Modal, TextInput, Image, ImageBackground, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 import Svg, { Polyline, Line, Circle } from 'react-native-svg';
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -650,164 +650,166 @@ export default function MoodBoard() {
                     animationType="fade"
                     onRequestClose={() => setLogOpen(false)}
                 >
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => setLogOpen(false)}
-                        style={{
+                    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setLogOpen(false); }}>
+                        <View style={{
                             flex: 1,
                             backgroundColor: 'rgba(0,0,0,0.3)',
                             justifyContent: 'flex-end',
-                        }}
-                    >
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            style={{
-                                backgroundColor: colors.darkgreen,
-                                padding: 16,
-                                borderTopLeftRadius: 16,
-                                borderTopRightRadius: 16,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    fontWeight: '700',
-                                    marginBottom: 10,
-                                    fontFamily: 'ArefRuqaaInk-Bold',
-                                    color: colors.text,
-                                }}
-                            >
-                                Log your mood
-                            </Text>
-
-                            {/* mood picker grid */}
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    flexWrap: 'wrap',
-                                    justifyContent: 'space-between',
-                                    marginBottom: 16,
-                                }}
-                            >
-                                {MOOD_ORDER.map((moodName) => {
-                                    const imgSource = moodImageFor(me, moodName);
-                                    const active = chosenMood === moodName;
-                                    return (
-                                        <TouchableOpacity
-                                            key={moodName}
-                                            onPress={() => setChosenMood(moodName)}
+                        }}>
+                            <TouchableWithoutFeedback onPress={() => { }}>
+                                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={64}>
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        style={{
+                                            backgroundColor: colors.darkgreen,
+                                            padding: 16,
+                                            borderTopLeftRadius: 16,
+                                            borderTopRightRadius: 16,
+                                        }}
+                                    >
+                                        <Text
                                             style={{
-                                                width: 110,
-                                                height: 50,
-                                                backgroundColor: active ? colors.mint : colors.glass,
-                                                borderColor: active ? colors.mint : colors.stroke,
-                                                borderWidth: 1,
-                                                borderRadius: 12,
-                                                padding: 10,
+                                                fontSize: 18,
+                                                fontWeight: '700',
                                                 marginBottom: 10,
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                                gap: 10,
+                                                fontFamily: 'ArefRuqaaInk-Bold',
+                                                color: colors.text,
                                             }}
                                         >
-                                            {imgSource ? (
-                                                <Image
-                                                    source={imgSource}
-                                                    style={{ width: 20, height: 40 }}
-                                                    resizeMode="contain"
-                                                />
-                                            ) : null}
+                                            Log your mood
+                                        </Text>
 
-                                            <Text
+                                        {/* mood picker grid */}
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                flexWrap: 'wrap',
+                                                justifyContent: 'space-between',
+                                                marginBottom: 16,
+                                            }}
+                                        >
+                                            {MOOD_ORDER.map((moodName) => {
+                                                const imgSource = moodImageFor(me, moodName);
+                                                const active = chosenMood === moodName;
+                                                return (
+                                                    <TouchableOpacity
+                                                        key={moodName}
+                                                        onPress={() => setChosenMood(moodName)}
+                                                        style={{
+                                                            width: 110,
+                                                            height: 50,
+                                                            backgroundColor: active ? colors.mint : colors.glass,
+                                                            borderColor: active ? colors.mint : colors.stroke,
+                                                            borderWidth: 1,
+                                                            borderRadius: 12,
+                                                            padding: 10,
+                                                            marginBottom: 10,
+                                                            flexDirection: 'row',
+                                                            alignItems: 'center',
+                                                            gap: 10,
+                                                        }}
+                                                    >
+                                                        {imgSource ? (
+                                                            <Image
+                                                                source={imgSource}
+                                                                style={{ width: 20, height: 40 }}
+                                                                resizeMode="contain"
+                                                            />
+                                                        ) : null}
+
+                                                        <Text
+                                                            style={{
+                                                                flexShrink: 1,
+                                                                fontFamily: 'ArefRuqaaInk-Regular',
+                                                                color: active ? colors.darkgreen : colors.text,
+                                                                fontSize: 10,
+                                                                fontWeight: active ? '700' : '400',
+                                                            }}
+                                                        >
+                                                            {moodName}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                );
+                                            })}
+                                        </View>
+
+                                        {/* Optional note */}
+                                        <View
+                                            style={{
+                                                borderWidth: 1,
+                                                borderColor: colors.stroke,
+                                                backgroundColor: colors.glass,
+                                                borderRadius: 12,
+                                                padding: 10,
+                                            }}
+                                        >
+                                            <TextInput
+                                                placeholder="Optional note…"
+                                                value={note}
+                                                onChangeText={setNote}
+                                                multiline
                                                 style={{
-                                                    flexShrink: 1,
+                                                    minHeight: 60,
+                                                    fontSize: 16,
                                                     fontFamily: 'ArefRuqaaInk-Regular',
-                                                    color: active ? colors.darkgreen : colors.text,
-                                                    fontSize: 10,
-                                                    fontWeight: active ? '700' : '400',
+                                                    color: colors.text,
+                                                }}
+                                                placeholderTextColor={colors.textMuted}
+                                            />
+                                        </View>
+
+                                        {/* Actions */}
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                justifyContent: 'flex-end',
+                                                marginTop: 12,
+                                            }}
+                                        >
+                                            <TouchableOpacity
+                                                onPress={() => setLogOpen(false)}
+                                                style={{ marginRight: 10 }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontWeight: '700',
+                                                        fontFamily: 'ArefRuqaaInk-Regular',
+                                                        color: colors.mint,
+                                                        fontSize: 16,
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                onPress={submitMood}
+                                                disabled={saving || !chosenMood}
+                                                style={{
+                                                    backgroundColor: colors.mint,
+                                                    paddingVertical: 10,
+                                                    paddingHorizontal: 16,
+                                                    borderRadius: 999,
+                                                    opacity: saving || !chosenMood ? 0.6 : 1,
                                                 }}
                                             >
-                                                {moodName}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    );
-                                })}
-                            </View>
-
-                            {/* Optional note */}
-                            <View
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: colors.stroke,
-                                    backgroundColor: colors.glass,
-                                    borderRadius: 12,
-                                    padding: 10,
-                                }}
-                            >
-                                <TextInput
-                                    placeholder="Optional note…"
-                                    value={note}
-                                    onChangeText={setNote}
-                                    multiline
-                                    style={{
-                                        minHeight: 60,
-                                        fontSize: 16,
-                                        fontFamily: 'ArefRuqaaInk-Regular',
-                                        color: colors.text,
-                                    }}
-                                    placeholderTextColor={colors.textMuted}
-                                />
-                            </View>
-
-                            {/* Actions */}
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-end',
-                                    marginTop: 12,
-                                }}
-                            >
-                                <TouchableOpacity
-                                    onPress={() => setLogOpen(false)}
-                                    style={{ marginRight: 10 }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontWeight: '700',
-                                            fontFamily: 'ArefRuqaaInk-Regular',
-                                            color: colors.mint,
-                                            fontSize: 16,
-                                        }}
-                                    >
-                                        Cancel
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    onPress={submitMood}
-                                    disabled={saving || !chosenMood}
-                                    style={{
-                                        backgroundColor: colors.mint,
-                                        paddingVertical: 10,
-                                        paddingHorizontal: 16,
-                                        borderRadius: 999,
-                                        opacity: saving || !chosenMood ? 0.6 : 1,
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            color: colors.darkgreen,
-                                            fontWeight: '700',
-                                            fontFamily: 'ArefRuqaaInk-Bold',
-                                            fontSize: 16,
-                                        }}
-                                    >
-                                        {saving ? 'Saving…' : 'Save'}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </TouchableOpacity>
+                                                <Text
+                                                    style={{
+                                                        color: colors.darkgreen,
+                                                        fontWeight: '700',
+                                                        fontFamily: 'ArefRuqaaInk-Bold',
+                                                        fontSize: 16,
+                                                    }}
+                                                >
+                                                    {saving ? 'Saving…' : 'Save'}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </TouchableOpacity>
+                                </KeyboardAvoidingView>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </Modal>
             </SafeAreaProvider>
         </ImageBackground>

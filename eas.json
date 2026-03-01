@@ -6,12 +6,20 @@
         "preview": {
             "android": {
                 "buildType": "apk"
+            },
+            "ios": {}
+        },
+        "preview-device": {
+            "ios": {},
+            "android": {
+                "buildType": "apk"
             }
         },
         "production": {
             "android": {
                 "gradleCommand": ":app:bundleRelease"
-            }
+            },
+            "ios": {}
         }
     }
 }

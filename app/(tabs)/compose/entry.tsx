@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import {
     View, Text, TextInput, TouchableOpacity, Image,
-    Alert, ActivityIndicator, ScrollView
+    Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform
 } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as ImagePicker from 'expo-image-picker';
@@ -145,71 +145,73 @@ export default function ComposeEntry() {
             </View>
 
             {/* Body */}
-            <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
-                {/* Title (dates usually have a title; moments can leave blank) */}
-                <View style={{ backgroundColor: '#F7FAF8', borderWidth: 1, borderColor: '#CFE1D9', borderRadius: 12, padding: 10 }}>
-                    <TextInput
-                        placeholder={kind === 'date' ? 'Title of the date' : 'Short title (optional)'}
-                        value={title}
-                        onChangeText={setTitle}
-                        style={{ fontSize: 16 }}
-                    />
-                </View>
-
-                {/* Body */}
-                <View style={{ backgroundColor: '#F7FAF8', borderWidth: 1, borderColor: '#CFE1D9', borderRadius: 12, padding: 10, minHeight: 120 }}>
-                    <TextInput
-                        placeholder={kind === 'date' ? 'Write your memory…' : 'Describe the moment…'}
-                        value={body}
-                        onChangeText={setBody}
-                        multiline
-                        style={{ fontSize: 16 }}
-                    />
-                </View>
-
-                {/* Date (optional for moment) */}
-                <View style={{ backgroundColor: '#F7FAF8', borderWidth: 1, borderColor: '#CFE1D9', borderRadius: 12, padding: 10 }}>
-                    <TextInput
-                        placeholder="YYYY-MM-DD"
-                        value={date}
-                        onChangeText={setDate}
-                        style={{ fontSize: 16 }}
-                    />
-                </View>
-
-                {/* Images tray */}
-                <View style={{ gap: 8 }}>
-                    <TouchableOpacity
-                        onPress={pickImages}
-                        style={{
-                            alignSelf: 'flex-start',
-                            backgroundColor: '#E6F1EC',
-                            borderWidth: 1, borderColor: '#CFE1D9',
-                            paddingVertical: 8,
-                            paddingHorizontal: 12,
-                            borderRadius: 999,
-                        }}
-                    >
-                        <Text style={{ fontWeight: '700' }}>＋ Add photos</Text>
-                    </TouchableOpacity>
-
-                    {imageUris.length > 0 ? (
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                            {imageUris.map((u, i) => (
-                                <Image key={u + i} source={{ uri: u }} style={{ width: 96, height: 96, borderRadius: 10 }} />
-                            ))}
-                        </View>
-                    ) : (
-                        <Text style={{ opacity: 0.6 }}>No photos yet.</Text>
-                    )}
-                </View>
-
-                {saving ? (
-                    <View style={{ alignItems: 'center', paddingTop: 8 }}>
-                        <ActivityIndicator />
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={64} style={{ flex: 1 }}>
+                <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
+                    {/* Title (dates usually have a title; moments can leave blank) */}
+                    <View style={{ backgroundColor: '#F7FAF8', borderWidth: 1, borderColor: '#CFE1D9', borderRadius: 12, padding: 10 }}>
+                        <TextInput
+                            placeholder={kind === 'date' ? 'Title of the date' : 'Short title (optional)'}
+                            value={title}
+                            onChangeText={setTitle}
+                            style={{ fontSize: 16 }}
+                        />
                     </View>
-                ) : null}
-            </ScrollView>
+
+                    {/* Body */}
+                    <View style={{ backgroundColor: '#F7FAF8', borderWidth: 1, borderColor: '#CFE1D9', borderRadius: 12, padding: 10, minHeight: 120 }}>
+                        <TextInput
+                            placeholder={kind === 'date' ? 'Write your memory…' : 'Describe the moment…'}
+                            value={body}
+                            onChangeText={setBody}
+                            multiline
+                            style={{ fontSize: 16 }}
+                        />
+                    </View>
+
+                    {/* Date (optional for moment) */}
+                    <View style={{ backgroundColor: '#F7FAF8', borderWidth: 1, borderColor: '#CFE1D9', borderRadius: 12, padding: 10 }}>
+                        <TextInput
+                            placeholder="YYYY-MM-DD"
+                            value={date}
+                            onChangeText={setDate}
+                            style={{ fontSize: 16 }}
+                        />
+                    </View>
+
+                    {/* Images tray */}
+                    <View style={{ gap: 8 }}>
+                        <TouchableOpacity
+                            onPress={pickImages}
+                            style={{
+                                alignSelf: 'flex-start',
+                                backgroundColor: '#E6F1EC',
+                                borderWidth: 1, borderColor: '#CFE1D9',
+                                paddingVertical: 8,
+                                paddingHorizontal: 12,
+                                borderRadius: 999,
+                            }}
+                        >
+                            <Text style={{ fontWeight: '700' }}>＋ Add photos</Text>
+                        </TouchableOpacity>
+
+                        {imageUris.length > 0 ? (
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                                {imageUris.map((u, i) => (
+                                    <Image key={u + i} source={{ uri: u }} style={{ width: 96, height: 96, borderRadius: 10 }} />
+                                ))}
+                            </View>
+                        ) : (
+                            <Text style={{ opacity: 0.6 }}>No photos yet.</Text>
+                        )}
+                    </View>
+
+                    {saving ? (
+                        <View style={{ alignItems: 'center', paddingTop: 8 }}>
+                            <ActivityIndicator />
+                        </View>
+                    ) : null}
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaProvider>
     );
 }

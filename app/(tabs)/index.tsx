@@ -128,28 +128,139 @@ function AuthScreen() {
   }
 
   return (
-    <SafeAreaProvider style={{ flex: 1, padding: 16, gap: 12, justifyContent: 'center' }}>
-      <Text style={{ fontSize: 28, marginBottom: 8, fontFamily: 'ArefRuqaaInk-Regular' }}>Welcome ♥</Text>
-      <Text style={{ opacity: 0.8, marginBottom: 8, fontFamily: 'ArefRuqaaInk-Regular' }}>Sign in with your email and password.</Text>
+    <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.darkgreen }}>
+      <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }}>
+        {/* Header with icon */}
+        <View style={{ alignItems: 'center', marginBottom: 48 }}>
+          <Text style={{ fontSize: 48, marginBottom: 16 }}>♥</Text>
+          <Text style={{
+            fontSize: 36,
+            fontFamily: 'ArefRuqaaInk-Bold',
+            color: colors.text,
+            marginBottom: 8,
+            textAlign: 'center'
+          }}>Welcome</Text>
+          <Text style={{
+            fontSize: 16,
+            fontFamily: 'ArefRuqaaInk-Regular',
+            color: colors.textMuted,
+            textAlign: 'center'
+          }}>Sign in to continue</Text>
+        </View>
 
-      <TextInput
-        placeholder="you@example.com"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        style={{ borderWidth: 1, padding: 12, borderRadius: 10 }}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={{ borderWidth: 1, padding: 12, borderRadius: 10, fontFamily: 'ArefRuqaaInk-Regular' }}
-      />
+        {/* Form Container */}
+        <View style={{ gap: 16, marginBottom: 28 }}>
+          {/* Email Input */}
+          <View>
+            <Text style={{
+              color: colors.textMuted,
+              fontSize: 13,
+              fontFamily: 'ArefRuqaaInk-Regular',
+              marginBottom: 8,
+              textTransform: 'uppercase',
+              letterSpacing: 0.5
+            }}>Email</Text>
+            <TextInput
+              placeholder="you@example.com"
+              placeholderTextColor={colors.textMuted}
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!busy}
+              style={{
+                backgroundColor: colors.glass,
+                borderColor: colors.stroke,
+                borderWidth: 1,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 16,
+                color: colors.text,
+                fontFamily: 'ArefRuqaaInk-Regular'
+              }}
+            />
+          </View>
 
-      <Button title={busy ? 'Signing in…' : 'Sign in'} onPress={signIn} disabled={busy} />
-      {err && <Text style={{ color: 'red' }}>{err}</Text>}
+          {/* Password Input */}
+          <View>
+            <Text style={{
+              color: colors.textMuted,
+              fontSize: 13,
+              fontFamily: 'ArefRuqaaInk-Regular',
+              marginBottom: 8,
+              textTransform: 'uppercase',
+              letterSpacing: 0.5
+            }}>Password</Text>
+            <TextInput
+              placeholder="••••••••"
+              placeholderTextColor={colors.textMuted}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              editable={!busy}
+              style={{
+                backgroundColor: colors.glass,
+                borderColor: colors.stroke,
+                borderWidth: 1,
+                borderRadius: 14,
+                padding: 14,
+                fontSize: 16,
+                color: colors.text,
+                fontFamily: 'ArefRuqaaInk-Regular'
+              }}
+            />
+          </View>
+        </View>
+
+        {/* Error Message */}
+        {err && (
+          <View style={{
+            backgroundColor: 'rgba(244, 123, 113, 0.15)',
+            borderColor: '#F47B71',
+            borderWidth: 1,
+            borderRadius: 10,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            marginBottom: 16
+          }}>
+            <Text style={{
+              color: '#FFB3AB',
+              fontSize: 13,
+              fontFamily: 'ArefRuqaaInk-Regular'
+            }}>{err}</Text>
+          </View>
+        )}
+
+        {/* Sign In Button */}
+        <Pressable
+          onPress={signIn}
+          disabled={busy}
+          style={{
+            backgroundColor: colors.mint,
+            borderRadius: 14,
+            paddingVertical: 14,
+            paddingHorizontal: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: busy ? 0.7 : 1,
+            shadowColor: colors.shadow,
+            shadowOpacity: 0.4,
+            shadowRadius: 8,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 5
+          }}
+        >
+          <Text style={{
+            color: colors.darkgreen,
+            fontSize: 16,
+            fontFamily: 'ArefRuqaaInk-Bold',
+            textTransform: 'uppercase',
+            letterSpacing: 0.5
+          }}>
+            {busy ? 'Signing in…' : 'Sign in'}
+          </Text>
+        </Pressable>
+      </View>
     </SafeAreaProvider>
   );
 }

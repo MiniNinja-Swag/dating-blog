@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     View, Text, TouchableOpacity, FlatList, ActivityIndicator,
-    RefreshControl, Modal, TextInput, Alert, Pressable, ImageBackground, Image, Platform
+    RefreshControl, Modal, TextInput, Alert, Pressable, ImageBackground, Image, Platform, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -389,130 +389,133 @@ export default function QuotesScreen() {
 
                 {/* Add modal */}
                 <Modal transparent visible={addOpen} animationType="fade" onRequestClose={() => setAddOpen(false)}>
-                    <Pressable
-                        onPress={() => setAddOpen(false)}
-                        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' }}
-                    >
-                        <Pressable
-                            onPress={() => { }}
-                            style={{ backgroundColor: '#FFFFFF', padding: 16, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-                        >
-                            {/* Kind switch */}
-                            <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-                                <TouchableOpacity
-                                    onPress={() => setKind('quote')}
-                                    style={{
-                                        paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999, marginRight: 8,
-                                        backgroundColor: kind === 'quote' ? '#3C7A67' : '#E6F1EC',
-                                    }}
-                                >
-                                    <Text style={{ color: kind === 'quote' ? '#fff' : '#0E1412', fontWeight: '700' }}>Quote</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => setKind('funny')}
-                                    style={{
-                                        paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999,
-                                        backgroundColor: kind === 'funny' ? '#3C7A67' : '#E6F1EC',
-                                    }}
-                                >
-                                    <Text style={{ color: kind === 'funny' ? '#fff' : '#0E1412', fontWeight: '700' }}>Moment</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            {/* Fields */}
-                            {kind === 'funny' ? (
-                                <>
-                                    <View style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 8 }}>
-                                        <TextInput
-                                            placeholder="Short title (e.g., Spicy noodle disaster)"
-                                            value={title}
-                                            onChangeText={setTitle}
-                                            style={{ fontSize: 16 }}
-                                        />
-                                    </View>
-                                    <View style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 8 }}>
-                                        <TextInput
-                                            placeholder="Describe the moment…"
-                                            value={body}
-                                            onChangeText={setBody}
-                                            multiline
-                                            style={{ minHeight: 80, fontSize: 16 }}
-                                        />
-                                    </View>
-                                </>
-                            ) : (
-                                <View style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 8 }}>
-                                    <TextInput
-                                        placeholder="What was said?"
-                                        value={body}
-                                        onChangeText={setBody}
-                                        multiline
-                                        style={{ minHeight: 80, fontSize: 16 }}
-                                    />
-                                </View>
-                            )}
-
-                            {/* Date: picker, not typing */}
-                            <View style={{ marginBottom: 8 }}>
-                                <TouchableOpacity
-                                    onPress={() => setDatePickerOpen(true)}
-                                    style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 12 }}
-                                >
-                                    <Text style={{ fontWeight: '700' }}>
-                                        {happenedDate ? `Date: ${formatYYYYMMDD(happenedDate)}` : 'Pick a date (optional)'}
-                                    </Text>
-                                </TouchableOpacity>
-                                {datePickerOpen && (
-                                    <DateTimePicker
-                                        mode="date"
-                                        value={happenedDate ?? new Date()}
-                                        display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                                        onChange={(_, d) => {
-                                            setDatePickerOpen(false);
-                                            if (d) setHappenedDate(d);
-                                        }}
-                                    />
-                                )}
-                            </View>
-
-                            {/* Who: me / partner / both / none */}
-                            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-                                <Text style={{ alignSelf: 'center' }}>Who:</Text>
-                                {(['me', 'partner', 'both'] as Who[]).map(w => (
-                                    <TouchableOpacity
-                                        key={w}
-                                        onPress={() => setWho(w)}
-                                        style={{
-                                            paddingVertical: 6, paddingHorizontal: 10, borderRadius: 999,
-                                            backgroundColor: who === w ? '#3C7A67' : '#E6F1EC'
-                                        }}
+                    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setAddOpen(false); }}>
+                        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' }}>
+                            <TouchableWithoutFeedback onPress={() => { }}>
+                                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={64}>
+                                    <Pressable
+                                        onPress={() => { }}
+                                        style={{ backgroundColor: '#FFFFFF', padding: 16, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
                                     >
-                                        <Text style={{ color: who === w ? '#fff' : '#0E1412', fontWeight: '700' }}>
-                                            {w === 'me' ? 'You' : w === 'partner' ? 'Partner' : 'Both'}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
+                                        {/* Kind switch */}
+                                        <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                                            <TouchableOpacity
+                                                onPress={() => setKind('quote')}
+                                                style={{
+                                                    paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999, marginRight: 8,
+                                                    backgroundColor: kind === 'quote' ? '#3C7A67' : '#E6F1EC',
+                                                }}
+                                            >
+                                                <Text style={{ color: kind === 'quote' ? '#fff' : '#0E1412', fontWeight: '700' }}>Quote</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={() => setKind('funny')}
+                                                style={{
+                                                    paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999,
+                                                    backgroundColor: kind === 'funny' ? '#3C7A67' : '#E6F1EC',
+                                                }}
+                                            >
+                                                <Text style={{ color: kind === 'funny' ? '#fff' : '#0E1412', fontWeight: '700' }}>Moment</Text>
+                                            </TouchableOpacity>
+                                        </View>
 
-                            {/* Actions */}
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                <TouchableOpacity onPress={() => setAddOpen(false)} style={{ marginRight: 10 }}>
-                                    <Text style={{ fontWeight: '700' }}>Cancel</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={addQuip}
-                                    disabled={saving || (!body.trim() && kind === 'quote') || (kind === 'funny' && !title.trim() && !body.trim())}
-                                    style={{
-                                        backgroundColor: '#3C7A67',
-                                        paddingVertical: 10, paddingHorizontal: 16,
-                                        borderRadius: 999, opacity: saving ? 0.7 : 1
-                                    }}
-                                >
-                                    <Text style={{ color: '#fff', fontWeight: '700' }}>{saving ? 'Saving…' : 'Add'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </Pressable>
-                    </Pressable>
+                                        {/* Fields */}
+                                        {kind === 'funny' ? (
+                                            <>
+                                                <View style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 8 }}>
+                                                    <TextInput
+                                                        placeholder="Short title (e.g., Spicy noodle disaster)"
+                                                        value={title}
+                                                        onChangeText={setTitle}
+                                                        style={{ fontSize: 16 }}
+                                                    />
+                                                </View>
+                                                <View style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 8 }}>
+                                                    <TextInput
+                                                        placeholder="Describe the moment…"
+                                                        value={body}
+                                                        onChangeText={setBody}
+                                                        multiline
+                                                        style={{ minHeight: 80, fontSize: 16 }}
+                                                    />
+                                                </View>
+                                            </>
+                                        ) : (
+                                            <View style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 8 }}>
+                                                <TextInput
+                                                    placeholder="What was said?"
+                                                    value={body}
+                                                    onChangeText={setBody}
+                                                    multiline
+                                                    style={{ minHeight: 80, fontSize: 16 }}
+                                                />
+                                            </View>
+                                        )}
+
+                                        {/* Date: picker, not typing */}
+                                        <View style={{ marginBottom: 8 }}>
+                                            <TouchableOpacity
+                                                onPress={() => setDatePickerOpen(true)}
+                                                style={{ backgroundColor: '#F7FAF8', borderColor: '#CFE1D9', borderWidth: 1, borderRadius: 12, padding: 12 }}
+                                            >
+                                                <Text style={{ fontWeight: '700' }}>
+                                                    {happenedDate ? `Date: ${formatYYYYMMDD(happenedDate)}` : 'Pick a date (optional)'}
+                                                </Text>
+                                            </TouchableOpacity>
+                                            {datePickerOpen && (
+                                                <DateTimePicker
+                                                    mode="date"
+                                                    value={happenedDate ?? new Date()}
+                                                    display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                                                    onChange={(_, d) => {
+                                                        setDatePickerOpen(false);
+                                                        if (d) setHappenedDate(d);
+                                                    }}
+                                                />
+                                            )}
+                                        </View>
+
+                                        {/* Who: me / partner / both / none */}
+                                        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+                                            <Text style={{ alignSelf: 'center' }}>Who:</Text>
+                                            {(['me', 'partner', 'both'] as Who[]).map(w => (
+                                                <TouchableOpacity
+                                                    key={w}
+                                                    onPress={() => setWho(w)}
+                                                    style={{
+                                                        paddingVertical: 6, paddingHorizontal: 10, borderRadius: 999,
+                                                        backgroundColor: who === w ? '#3C7A67' : '#E6F1EC'
+                                                    }}
+                                                >
+                                                    <Text style={{ color: who === w ? '#fff' : '#0E1412', fontWeight: '700' }}>
+                                                        {w === 'me' ? 'You' : w === 'partner' ? 'Partner' : 'Both'}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </View>
+
+                                        {/* Actions */}
+                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                            <TouchableOpacity onPress={() => setAddOpen(false)} style={{ marginRight: 10 }}>
+                                                <Text style={{ fontWeight: '700' }}>Cancel</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={addQuip}
+                                                disabled={saving || (!body.trim() && kind === 'quote') || (kind === 'funny' && !title.trim() && !body.trim())}
+                                                style={{
+                                                    backgroundColor: '#3C7A67',
+                                                    paddingVertical: 10, paddingHorizontal: 16,
+                                                    borderRadius: 999, opacity: saving ? 0.7 : 1
+                                                }}
+                                            >
+                                                <Text style={{ color: '#fff', fontWeight: '700' }}>{saving ? 'Saving…' : 'Add'}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </Pressable>
+                                </KeyboardAvoidingView>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </Modal>
             </SafeAreaProvider>
         </ImageBackground>

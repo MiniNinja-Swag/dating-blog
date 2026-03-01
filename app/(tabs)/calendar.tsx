@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     View, Text, TouchableOpacity, ActivityIndicator,
-    ScrollView, RefreshControl, Modal, TextInput, Switch, Alert, Platform, ImageBackground
+    ScrollView, RefreshControl, Modal, TextInput, Switch, Alert, Platform, ImageBackground, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -444,106 +444,108 @@ export default function CalendarScreen() {
 
                 {/* Add event sheet (with native date/time pickers) */}
                 <Modal transparent visible={addOpen} animationType="fade" onRequestClose={() => setAddOpen(false)}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => setAddOpen(false)}
-                        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' }}
-                    >
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            style={{ backgroundColor: colors.darkgreen, padding: 16, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-                        >
-                            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Add event</Text>
+                    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setAddOpen(false); }}>
+                        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' }}>
+                            <TouchableWithoutFeedback onPress={() => { }}>
+                                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={64}>
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        style={{ backgroundColor: colors.darkgreen, padding: 16, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+                                    >
+                                        <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Add event</Text>
 
-                            <View style={{ borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 10, backgroundColor: colors.glass, marginBottom: 8 }}>
-                                <TextInput placeholder="Title (e.g., Sushi date)" value={title} onChangeText={setTitle} placeholderTextColor={colors.textMuted} style={{ color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }} />
-                            </View>
+                                        <View style={{ borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 10, backgroundColor: colors.glass, marginBottom: 8 }}>
+                                            <TextInput placeholder="Title (e.g., Sushi date)" value={title} onChangeText={setTitle} placeholderTextColor={colors.textMuted} style={{ color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }} />
+                                        </View>
 
-                            {/* Date & time selectors */}
-                            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 8 }}>
-                                <TouchableOpacity
-                                    onPress={() => setShowDate(true)}
-                                    style={{ flex: 1, borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 12, backgroundColor: colors.glass }}
-                                >
-                                    <Text style={{ fontWeight: '700', marginBottom: 4, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Date</Text>
-                                    <Text style={{ color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>{when.toLocaleDateString()}</Text>
-                                </TouchableOpacity>
+                                        {/* Date & time selectors */}
+                                        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 8 }}>
+                                            <TouchableOpacity
+                                                onPress={() => setShowDate(true)}
+                                                style={{ flex: 1, borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 12, backgroundColor: colors.glass }}
+                                            >
+                                                <Text style={{ fontWeight: '700', marginBottom: 4, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Date</Text>
+                                                <Text style={{ color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>{when.toLocaleDateString()}</Text>
+                                            </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    onPress={() => setShowTime(true)}
-                                    style={{ width: 140, borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 12, backgroundColor: colors.glass }}
-                                >
-                                    <Text style={{ fontWeight: '700', marginBottom: 4, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Time</Text>
-                                    <Text style={{ color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>{when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-                                </TouchableOpacity>
-                            </View>
+                                            <TouchableOpacity
+                                                onPress={() => setShowTime(true)}
+                                                style={{ width: 140, borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 12, backgroundColor: colors.glass }}
+                                            >
+                                                <Text style={{ fontWeight: '700', marginBottom: 4, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Time</Text>
+                                                <Text style={{ color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>{when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                            </TouchableOpacity>
+                                        </View>
 
-                            {/* Native pickers (conditional) */}
-                            {showDate && (
-                                <DateTimePicker
-                                    value={when}
-                                    mode="date"
-                                    display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
-                                    onChange={(_, selected) => {
-                                        setShowDate(Platform.OS === 'ios'); // keep inline open on iOS
-                                        if (!selected) return;
-                                        const next = new Date(when);
-                                        next.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate());
-                                        setWhen(next);
-                                    }}
-                                />
-                            )}
+                                        {/* Native pickers (conditional) */}
+                                        {showDate && (
+                                            <DateTimePicker
+                                                value={when}
+                                                mode="date"
+                                                display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
+                                                onChange={(_, selected) => {
+                                                    setShowDate(Platform.OS === 'ios'); // keep inline open on iOS
+                                                    if (!selected) return;
+                                                    const next = new Date(when);
+                                                    next.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate());
+                                                    setWhen(next);
+                                                }}
+                                            />
+                                        )}
 
-                            {showTime && (
-                                <DateTimePicker
-                                    value={when}
-                                    mode="time"
-                                    is24Hour
-                                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                    onChange={(_, selected) => {
-                                        setShowTime(Platform.OS === 'ios');
-                                        if (!selected) return;
-                                        const next = new Date(when);
-                                        next.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
-                                        setWhen(next);
-                                    }}
-                                />
-                            )}
+                                        {showTime && (
+                                            <DateTimePicker
+                                                value={when}
+                                                mode="time"
+                                                is24Hour
+                                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                                onChange={(_, selected) => {
+                                                    setShowTime(Platform.OS === 'ios');
+                                                    if (!selected) return;
+                                                    const next = new Date(when);
+                                                    next.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
+                                                    setWhen(next);
+                                                }}
+                                            />
+                                        )}
 
-                            <View style={{ borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 10, backgroundColor: colors.glass }}>
-                                <TextInput
-                                    placeholder="Description (optional)"
-                                    value={desc}
-                                    onChangeText={setDesc}
-                                    multiline
-                                    placeholderTextColor={colors.textMuted}
-                                    style={{ minHeight: 64, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}
-                                />
-                            </View>
+                                        <View style={{ borderWidth: 1, borderColor: colors.stroke, borderRadius: 12, padding: 10, backgroundColor: colors.glass }}>
+                                            <TextInput
+                                                placeholder="Description (optional)"
+                                                value={desc}
+                                                onChangeText={setDesc}
+                                                multiline
+                                                placeholderTextColor={colors.textMuted}
+                                                style={{ minHeight: 64, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}
+                                            />
+                                        </View>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginBottom: 6 }}>
-                                <Switch value={important} onValueChange={setImportant} />
-                                <Text style={{ marginLeft: 8, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Mark as important</Text>
-                            </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginBottom: 6 }}>
+                                            <Switch value={important} onValueChange={setImportant} />
+                                            <Text style={{ marginLeft: 8, color: colors.text, fontFamily: 'ArefRuqaaInk-Regular' }}>Mark as important</Text>
+                                        </View>
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
-                                <TouchableOpacity onPress={() => setAddOpen(false)} style={{ marginRight: 10 }}>
-                                    <Text style={{ fontWeight: '700', color: colors.mint, fontFamily: 'ArefRuqaaInk-Regular' }}>Cancel</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={saveEvent}
-                                    disabled={saving || !title.trim()}
-                                    style={{
-                                        backgroundColor: colors.mint,
-                                        paddingVertical: 10, paddingHorizontal: 16,
-                                        borderRadius: 999, opacity: saving || !title.trim() ? 0.6 : 1
-                                    }}
-                                >
-                                    <Text style={{ color: colors.darkgreen, fontWeight: '700', fontFamily: 'ArefRuqaaInk-Regular' }}>{saving ? 'Saving…' : 'Save'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </TouchableOpacity>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
+                                            <TouchableOpacity onPress={() => setAddOpen(false)} style={{ marginRight: 10 }}>
+                                                <Text style={{ fontWeight: '700', color: colors.mint, fontFamily: 'ArefRuqaaInk-Regular' }}>Cancel</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={saveEvent}
+                                                disabled={saving || !title.trim()}
+                                                style={{
+                                                    backgroundColor: colors.mint,
+                                                    paddingVertical: 10, paddingHorizontal: 16,
+                                                    borderRadius: 999, opacity: saving || !title.trim() ? 0.6 : 1
+                                                }}
+                                            >
+                                                <Text style={{ color: colors.darkgreen, fontWeight: '700', fontFamily: 'ArefRuqaaInk-Regular' }}>{saving ? 'Saving…' : 'Save'}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </TouchableOpacity>
+                                </KeyboardAvoidingView>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </Modal>
             </SafeAreaProvider>
         </ImageBackground>
